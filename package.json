@@ -1,0 +1,34 @@
+{
+  "name": "qrdrop",
+  "version": "0.1.0",
+  "description": "A two-way LAN file-sharing CLI tool built with Bun",
+  "module": "index.ts",
+  "type": "module",
+  "main": "index.ts",
+  "bin": {
+    "qrdrop": "./index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/behnamazimi/qrdrop.git"
+  },
+  "scripts": {
+    "start": "bun run index.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check-types": "tsc --noEmit",
+    "build": "mkdir -p dist && node -e \"const p=process.platform;const ext=p==='win32'?'.exe':'';const cmd='bun build --compile index.ts --outfile dist/qrdrop'+ext+' --minify'+(p==='win32'?' --windows-hide-console':'');require('child_process').execSync(cmd,{stdio:'inherit'})\"",
+    "build:windows": "echo 'Note: build:windows only works on Windows. Use \"bun run build\" on Windows instead.'"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.3"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/qrcode": "^1.5.5",
+    "prettier": "^3.7.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

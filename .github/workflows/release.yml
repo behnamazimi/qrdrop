@@ -1,0 +1,95 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+            binary_name: qrdrop
+            asset_name: qrdrop-linux-x64
+          - os: macos-13
+            platform: darwin
+            arch: x64
+            binary_name: qrdrop
+            asset_name: qrdrop-macos-x64
+          - os: macos-14
+            platform: darwin
+            arch: arm64
+            binary_name: qrdrop
+            asset_name: qrdrop-macos-arm64
+          - os: windows-latest
+            platform: win32
+            arch: x64
+            binary_name: qrdrop.exe
+            asset_name: qrdrop-windows-x64.exe
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build binary
+        run: |
+          if [ "${{ matrix.platform }}" = "win32" ]; then
+            bun build --compile index.ts --outfile dist/qrdrop.exe --minify --windows-hide-console
+          else
+            bun build --compile index.ts --outfile dist/qrdrop --minify
+          fi
+
+      - name: Rename binary for release
+        run: |
+          if [ "${{ matrix.platform }}" = "win32" ]; then
+            mv dist/${{ matrix.binary_name }} dist/${{ matrix.asset_name }}
+          else
+            mv dist/${{ matrix.binary_name }} dist/${{ matrix.asset_name }}
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: dist/${{ matrix.asset_name }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release assets
+        run: |
+          mkdir -p release
+          cp artifacts/qrdrop-linux-x64/qrdrop-linux-x64 release/ || true
+          cp artifacts/qrdrop-macos-x64/qrdrop-macos-x64 release/ || true
+          cp artifacts/qrdrop-macos-arm64/qrdrop-macos-arm64 release/ || true
+          cp artifacts/qrdrop-windows-x64.exe/qrdrop-windows-x64.exe release/ || true
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
