@@ -118,4 +118,4 @@ bun run check-types     # Type check
 
 **Requirements:** Bun runtime, OpenSSL (optional, for `--secure`)
 
-Built with Bun. 
+Built with Bun.

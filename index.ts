@@ -13,7 +13,7 @@ async function main() {
     const options = parseArgs(args);
 
     // Branding
-    console.log("qrdrop - LAN file sharing");
+    console.log("qrdrop - LAN file sharing\n");
 
     // Resolve output directory (default to current working directory)
     const outputDirectory = resolve(options.output || process.cwd());
