@@ -13,7 +13,7 @@ async function main() {
     const options = parseArgs(args);
 
     // Branding
-    console.log("qrdrop - LAN file sharing\n");
+    console.log("qrdrop - LAN file sharing");
 
     // Resolve output directory (default to current working directory)
     const outputDirectory = resolve(options.output || process.cwd());
@@ -63,11 +63,11 @@ async function main() {
       const timeoutSeconds = Math.floor((timeoutMs % 60000) / 1000);
       if (timeoutMinutes > 0) {
         console.log(
-          `Server will auto-close in ${timeoutMinutes} minute${timeoutMinutes > 1 ? "s" : ""}${timeoutSeconds > 0 ? ` ${timeoutSeconds} second${timeoutSeconds > 1 ? "s" : ""}` : ""}.\n`
+          `Server will auto-close in ${timeoutMinutes} minute${timeoutMinutes > 1 ? "s" : ""}${timeoutSeconds > 0 ? ` ${timeoutSeconds} second${timeoutSeconds > 1 ? "s" : ""}` : ""}.`
         );
       } else {
         console.log(
-          `Server will auto-close in ${timeoutSeconds} second${timeoutSeconds > 1 ? "s" : ""}.\n`
+          `Server will auto-close in ${timeoutSeconds} second${timeoutSeconds > 1 ? "s" : ""}.`
         );
       }
     }
@@ -77,6 +77,10 @@ async function main() {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
+      // Restore stdin to normal mode if it was set to raw mode
+      if (process.stdin.isTTY) {
+        process.stdin.setRawMode(false);
+      }
       console.log("\nServer stopped.");
       server.stop();
       process.exit(0);
@@ -84,6 +88,28 @@ async function main() {
 
     process.on("SIGINT", shutdown);
     process.on("SIGTERM", shutdown);
+
+    // Set up "press q to quit" functionality
+    if (process.stdin.isTTY) {
+      // Set stdin to raw mode to capture individual keypresses
+      process.stdin.setRawMode(true);
+      process.stdin.resume();
+      process.stdin.setEncoding("utf8");
+
+      process.stdin.on("data", (key: string) => {
+        // Handle 'q' or 'Q' to quit
+        if (key === "q" || key === "Q") {
+          shutdown();
+        }
+        // Handle Ctrl+C (\u0003) - in raw mode, we need to handle it explicitly
+        else if (key === "\u0003") {
+          shutdown();
+        }
+      });
+
+      // Display hint after QR code
+      console.log("Press 'q' to quit");
+    }
   } catch (error) {
     console.error("Error:", error instanceof Error ? error.message : error);
     process.exit(1);

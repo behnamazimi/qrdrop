@@ -26,9 +26,9 @@ export async function displayQRCode(url: string): Promise<void> {
   try {
     const qrString = await generateQRCode(url);
     console.log(qrString);
-    console.log(`\nor visit: ${url}\n`);
+    console.log(`or visit: ${url}`);
   } catch (error) {
     console.error("Failed to display QR code:", error);
-    console.log(`\nor visit: ${url}\n`);
+    console.log(`or visit: ${url}`);
   }
 }

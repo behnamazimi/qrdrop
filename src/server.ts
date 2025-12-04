@@ -139,6 +139,8 @@ export async function createServer(config: ServerConfig) {
 
       // Route: POST /stop - Stop server
       if (pathname === "/stop" && request.method === "POST") {
+        // Log that server was stopped from UI
+        console.log("\nServer stopped from web UI.");
         // Stop the server gracefully
         setTimeout(() => {
           if (serverInstance) {

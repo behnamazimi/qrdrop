@@ -459,9 +459,32 @@ export function generateHTML(): string {
           x-show="messageText"
           x-text="messageText"
           style="width: 100%; max-width: 400px;"
-        ></div>
+        >        </div>
       </div>
     </section>
+
+    <footer style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(212, 165, 116, 0.15);">
+      <a 
+        href="https://github.com/behnamazimi/qrdrop" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        style="
+          color: var(--text-secondary);
+          text-decoration: none;
+          font-size: 0.875rem;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          transition: all 0.3s ease;
+          opacity: 0.7;
+        "
+        onmouseover="this.style.opacity='1'; this.style.color='var(--warm-brown)'"
+        onmouseout="this.style.opacity='0.7'; this.style.color='var(--text-secondary)'"
+      >
+        <span>⭐</span>
+        <span>View on GitHub</span>
+      </a>
+    </footer>
   </div>
 
   <script>

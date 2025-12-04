@@ -41,7 +41,7 @@ export function detectLANIP(): string | null {
  * Note: There's a small race condition window between checking and using the port,
  * but this is acceptable for most use cases. For production, consider using a port lock.
  */
-export async function findAvailablePort(startPort: number = 8080): Promise<number> {
+export async function findAvailablePort(startPort: number = 1673): Promise<number> {
   const maxAttempts = 100;
   let port = startPort;
 

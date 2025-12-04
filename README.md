@@ -2,6 +2,10 @@
 
 A two-way LAN file-sharing CLI tool built with Bun. Share files across your local network with a simple QR code scan.
 
+> Inspired by [`qrcp`](https://github.com/claudiodangelis/qrcp)
+
+![qrdrop - webui](ss.png)
+
 ## Quick Install (Recommended)
 
 **One command installation:**
@@ -32,40 +36,6 @@ After downloading, make it executable (macOS/Linux):
 ```bash
 chmod +x qrdrop
 mv qrdrop /usr/local/bin/  # or ~/.local/bin
-```
-
-### Package Managers
-
-**Homebrew (macOS):**
-
-```bash
-brew install behnamazimi/qrdrop/qrdrop
-```
-
-**Scoop (Windows):**
-
-```bash
-scoop install https://raw.githubusercontent.com/behnamazimi/qrdrop/main/scoop/qrdrop.json
-```
-
-**Chocolatey (Windows):**
-
-```bash
-choco install qrdrop
-```
-
-### npm/npx
-
-**Global installation:**
-
-```bash
-npm install -g qrdrop
-```
-
-**Run without installing:**
-
-```bash
-npx qrdrop
 ```
 
 ### From Source
@@ -148,4 +118,4 @@ bun run check-types     # Type check
 
 **Requirements:** Bun runtime, OpenSSL (optional, for `--secure`)
 
-Built with Bun v1.2.21. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+Built with Bun. 
