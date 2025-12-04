@@ -41,29 +41,43 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
+        shell: bash
         run: bun install
 
+      - name: Create dist directory
+        shell: bash
+        run: mkdir -p dist
+
       - name: Build binary
+        shell: bash
         run: |
           if [ "${{ matrix.platform }}" = "win32" ]; then
-            bun build --compile index.ts --outfile dist/qrdrop.exe --minify --windows-hide-console
+            bun build --compile index.ts --outfile dist/${{ matrix.binary_name }} --minify --windows-hide-console
           else
-            bun build --compile index.ts --outfile dist/qrdrop --minify
+            bun build --compile index.ts --outfile dist/${{ matrix.binary_name }} --minify
+          fi
+
+      - name: Verify binary exists
+        shell: bash
+        run: |
+          ls -lh dist/
+          if [ ! -f "dist/${{ matrix.binary_name }}" ]; then
+            echo "Error: Binary not found at dist/${{ matrix.binary_name }}"
+            exit 1
           fi
 
       - name: Rename binary for release
+        shell: bash
         run: |
-          if [ "${{ matrix.platform }}" = "win32" ]; then
-            mv dist/${{ matrix.binary_name }} dist/${{ matrix.asset_name }}
-          else
-            mv dist/${{ matrix.binary_name }} dist/${{ matrix.asset_name }}
-          fi
+          mv dist/${{ matrix.binary_name }} dist/${{ matrix.asset_name }}
+          ls -lh dist/${{ matrix.asset_name }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.asset_name }}
           path: dist/${{ matrix.asset_name }}
+          retention-days: 1
 
   release:
     needs: build
