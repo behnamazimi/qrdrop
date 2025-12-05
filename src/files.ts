@@ -1,18 +1,16 @@
 import { stat, readdir } from "fs/promises";
 import { basename, join, extname } from "path";
-import { validatePath, isSymlink, parseRangeHeader } from "./security";
+import { validatePath, isSymlink, parseRangeHeader, isFileTypeAllowed } from "./security";
+import type { FileInfo } from "./types/files";
+import { formatError } from "./utils/error";
 
-export interface FileInfo {
-  name: string;
-  size: number;
-  type: string;
-  modified: Date;
-}
+// Re-export the shared type for backward compatibility
+export type { FileInfo } from "./types/files";
 
 /**
  * Get MIME type from file extension
  */
-function getMimeType(filename: string): string {
+export function getMimeType(filename: string): string {
   const ext = extname(filename).toLowerCase();
   const mimeTypes: Record<string, string> = {
     ".html": "text/html",
@@ -37,9 +35,12 @@ function getMimeType(filename: string): string {
 }
 
 /**
- * List files in a directory
+ * List all files in a directory, excluding symlinks
+ * @param baseDirectory - The directory path to list files from
+ * @returns Array of file information objects, sorted alphabetically by name
+ * @returns Empty array if directory doesn't exist or can't be read
  */
-export async function listFiles(baseDirectory: string): Promise<FileInfo[]> {
+async function listFiles(baseDirectory: string): Promise<FileInfo[]> {
   const files: FileInfo[] = [];
 
   try {
@@ -60,7 +61,7 @@ export async function listFiles(baseDirectory: string): Promise<FileInfo[]> {
             name: entry.name,
             size: stats.size,
             type: getMimeType(entry.name),
-            modified: stats.mtime,
+            modified: stats.mtime.toISOString(),
           });
         } catch {
           // Skip files we can't stat
@@ -68,7 +69,7 @@ export async function listFiles(baseDirectory: string): Promise<FileInfo[]> {
         }
       }
     }
-  } catch (error) {
+  } catch {
     // Directory doesn't exist or can't be read
     return [];
   }
@@ -77,41 +78,13 @@ export async function listFiles(baseDirectory: string): Promise<FileInfo[]> {
 }
 
 /**
- * Get file info
- */
-export async function getFileInfo(
-  filename: string,
-  baseDirectory: string
-): Promise<FileInfo | null> {
-  const validatedPath = await validatePath(filename, baseDirectory);
-  if (!validatedPath) {
-    return null;
-  }
-
-  // Check if it's a symlink
-  if (await isSymlink(validatedPath)) {
-    return null;
-  }
-
-  try {
-    const stats = await stat(validatedPath);
-    if (!stats.isFile()) {
-      return null;
-    }
-
-    return {
-      name: basename(validatedPath),
-      size: stats.size,
-      type: getMimeType(validatedPath),
-      modified: stats.mtime,
-    };
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Serve file with range request support (RFC 7233)
+ * Serve a file with HTTP range request support (RFC 7233)
+ * Uses efficient file slicing to avoid loading entire file into memory
+ * @param filename - The name of the file to serve
+ * @param baseDirectory - The base directory to resolve the file path from
+ * @param rangeHeader - The Range header value from the request, or null if no range requested
+ * @returns HTTP Response with file content or appropriate error status
+ * @returns 404 if file not found, 403 if symlink, 206 for partial content, 200 for full file
  */
 export async function serveFile(
   filename: string,
@@ -153,44 +126,19 @@ export async function serveFile(
       });
     }
 
-    // Handle single range (most common case)
-    if (ranges.length === 1) {
-      const range = ranges[0]!;
-      const start = range.start;
-      const end = range.end;
-      const contentLength = end - start + 1;
-
-      // Read the range
-      const file = Bun.file(validatedPath);
-      const buffer = await file.arrayBuffer();
-      const rangeBuffer = buffer.slice(start, end + 1);
-
-      return new Response(rangeBuffer, {
-        status: 206, // Partial Content
-        headers: {
-          "Content-Type": mimeType,
-          "Content-Length": contentLength.toString(),
-          "Content-Range": `bytes ${start}-${end}/${fileSize}`,
-          "Accept-Ranges": "bytes",
-          "Last-Modified": stats.mtime.toUTCString(),
-        },
-      });
-    }
-
-    // Handle multiple ranges (multipart/byteranges)
-    // For simplicity, we'll serve the first range
-    // Full multipart support would require more complex response formatting
+    // Handle range request (serves first range only)
+    // Note: Full multipart/byteranges support would require more complex response formatting
     const range = ranges[0]!;
     const start = range.start;
     const end = range.end;
     const contentLength = end - start + 1;
 
+    // Use Bun's file slicing for efficient range reading without loading entire file
     const file = Bun.file(validatedPath);
-    const buffer = await file.arrayBuffer();
-    const rangeBuffer = buffer.slice(start, end + 1);
+    const rangeBlob = file.slice(start, end + 1);
 
-    return new Response(rangeBuffer, {
-      status: 206,
+    return new Response(rangeBlob, {
+      status: 206, // Partial Content
       headers: {
         "Content-Type": mimeType,
         "Content-Length": contentLength.toString(),
@@ -200,14 +148,19 @@ export async function serveFile(
       },
     });
   } catch (error) {
+    console.error("File serving error:", formatError(error));
     return new Response("Internal server error", { status: 500 });
   }
 }
 
 /**
- * Get all files from multiple file paths (handles directories)
+ * Get files from multiple file paths, handling both files and directories
+ * @param filePaths - Array of file or directory paths to process
+ * @param allowedTypes - Optional array of allowed file extensions to filter by
+ * @returns Array of file information objects for all files found
+ * @returns Files from directories are included, symlinks are excluded
  */
-export async function getAllFiles(filePaths: string[]): Promise<FileInfo[]> {
+export async function getFiles(filePaths: string[], allowedTypes?: string[]): Promise<FileInfo[]> {
   const allFiles: FileInfo[] = [];
 
   for (const filePath of filePaths) {
@@ -223,7 +176,7 @@ export async function getAllFiles(filePaths: string[]): Promise<FileInfo[]> {
           name: basename(filePath),
           size: stats.size,
           type: getMimeType(filePath),
-          modified: stats.mtime,
+          modified: stats.mtime.toISOString(),
         });
       } else if (stats.isDirectory()) {
         // Directory - list all files
@@ -234,6 +187,11 @@ export async function getAllFiles(filePaths: string[]): Promise<FileInfo[]> {
       // Skip files/directories we can't access
       continue;
     }
+  }
+
+  // Filter by allowed types if specified
+  if (allowedTypes && allowedTypes.length > 0) {
+    return allFiles.filter((file) => isFileTypeAllowed(file.name, allowedTypes));
   }
 
   return allFiles;

@@ -1,4 +1,4 @@
-export interface TransferStats {
+interface TransferStats {
   downloads: number;
   uploads: number;
   totalBytesDownloaded: number;

@@ -7,4 +7,5 @@ build
 coverage
 *.log
 .DS_Store
+index.html
 

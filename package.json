@@ -17,18 +17,29 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check-types": "tsc --noEmit",
-    "build": "mkdir -p dist && node -e \"const p=process.platform;const ext=p==='win32'?'.exe':'';const cmd='bun build --compile index.ts --outfile dist/qrdrop'+ext+' --minify'+(p==='win32'?' --windows-hide-console':'');require('child_process').execSync(cmd,{stdio:'inherit'})\"",
+    "build:ui": "bun run src/ui/build.ts",
+    "build": "bun run build:ui && mkdir -p dist && node -e \"const p=process.platform;const ext=p==='win32'?'.exe':'';const cmd='bun build --compile index.ts --outfile dist/qrdrop'+ext+' --minify'+(p==='win32'?' --windows-hide-console':'');require('child_process').execSync(cmd,{stdio:'inherit'})\"",
     "build:windows": "echo 'Note: build:windows only works on Windows. Use \"bun run build\" on Windows instead.'"
   },
   "dependencies": {
-    "qrcode": "^1.5.3"
+    "@clack/prompts": "^0.11.0",
+    "@iarna/toml": "^2.2.5",
+    "archiver": "^7.0.1",
+    "cli-spinners": "^3.3.0",
+    "clipboardy": "^5.0.1",
+    "picocolors": "^1.1.1",
+    "qrcode": "^1.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "selfsigned": "^5.2.0"
   },
   "devDependencies": {
+    "@types/archiver": "^7.0.0",
     "@types/bun": "latest",
     "@types/qrcode": "^1.5.5",
-    "prettier": "^3.7.4"
-  },
-  "peerDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "prettier": "^3.7.4",
     "typescript": "^5"
   }
 }
