@@ -190,7 +190,11 @@ export async function getNetworkInfo(
 
   const port = portOverride || (await findAvailablePort(DEFAULT_START_PORT));
   const protocol = secure ? "https" : "http";
-  const path = customPath || generateRandomPath();
+  let path = customPath || generateRandomPath();
+  // Ensure path always starts with /
+  if (!path.startsWith("/")) {
+    path = "/" + path;
+  }
   const url = `${protocol}://${hostname}:${port}${path}`;
 
   // For binding, use IP or 0.0.0.0 if FQDN was provided

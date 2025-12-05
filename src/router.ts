@@ -54,8 +54,6 @@ export class Router {
       pattern = pattern.replace(`__PARAM_${index}__`, paramPattern);
     });
 
-    console.log(`[ROUTER] Adding route: ${method.toUpperCase()} ${path} -> pattern: ^${pattern}$`);
-
     this.routes.push({
       method: method.toUpperCase(),
       pattern: new RegExp(`^${pattern}$`),

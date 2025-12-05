@@ -11,7 +11,7 @@ export const MAX_PORT_ATTEMPTS = 100;
 export const PORT_CHECK_DELAY_MS = 10;
 
 // Path and security constants
-export const RANDOM_PATH_LENGTH = 16;
+export const RANDOM_PATH_LENGTH = 4;
 export const RANDOM_PATH_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 // File size constants
