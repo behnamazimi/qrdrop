@@ -44,6 +44,10 @@ jobs:
         shell: bash
         run: bun install
 
+      - name: Build UI
+        shell: bash
+        run: bun run build:ui
+
       - name: Create dist directory
         shell: bash
         run: mkdir -p dist
