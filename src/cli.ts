@@ -41,7 +41,7 @@ const parseArgsConfig = {
   host: { type: "string" },
   timeout: { type: "string" },
   "keep-alive": { type: "boolean", default: false },
-  interface: { type: "string", short: "i" },
+  interface: { type: "string" },
   zip: { type: "boolean", default: false },
   "url-path": { type: "string" },
   config: { type: "string" },
@@ -56,7 +56,7 @@ const parseArgsConfig = {
   "log-file": { type: "string" },
   "json-log": { type: "boolean", default: false },
   help: { type: "boolean", short: "h", default: false },
-  interactive: { type: "boolean", default: false },
+  interactive: { type: "boolean", default: false, short: "i" },
   cert: { type: "string" },
   key: { type: "string" },
 } as const;

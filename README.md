@@ -8,7 +8,11 @@ A two-way LAN file-sharing CLI tool built with Bun. Share files across your loca
 | --------------------------- | ---------------------------- |
 | ![qrdrop - cli](ss-cli.png) | ![qrdrop - webui](ss-ui.png) |
 
-## Quick Install (Recommended)
+> **Note:** Like all local network file-sharing tools, qrdrop shares files over your LAN. Be mindful of what you share and consider using the built-in security features (IP allowlists, rate limiting, HTTPS) for sensitive files. This is standard practice for any tool in this category.
+
+## Installation
+
+### Quick Install (Recommended)
 
 **One command installation:**
 
@@ -21,8 +25,6 @@ Or with wget:
 ```bash
 wget -qO- https://raw.githubusercontent.com/behnamazimi/qrdrop/main/install.sh | sh
 ```
-
-## Installation
 
 ### Download Binary
 
@@ -66,7 +68,7 @@ qrdrop .  --allow-types png,pdf         # Share all png and pdf files in current
 **Receive files:**
 
 ```bash
-qrdrop --output ./downloads             # Upload-only mode
+qrdrop --output ./downloads
 ```
 
 **Two-way sharing:**
@@ -86,34 +88,34 @@ qrdrop completion bash                  # Generate shell completion script
 
 ## Options
 
-| Option                      | Short | Description                                            |
-| --------------------------- | ----- | ------------------------------------------------------ |
-| `--file <path>`             | `-f`  | Share file(s) (use multiple times, or use `.` for cwd) |
-| `--directory [path]`        | `-d`  | Share directory (default: current)                     |
-| `--output <path>`           | `-o`  | Directory for received files                           |
-| `--secure`                  |       | Enable HTTPS/TLS (auto-generates self-signed cert)     |
-| `--cert <path>`             |       | Custom TLS certificate file (implies --secure)         |
-| `--key <path>`              |       | Custom TLS private key file (implies --secure)         |
-| `--port <number>`           |       | Specify port (default: 1673)                           |
-| `--host <ip\|fqdn>`         |       | Specify host IP or FQDN                                |
-| `--interface <name>`        | `-i`  | Network interface (use "any" for all)                  |
-| `--timeout <seconds>`       |       | Set timeout (default: 600s / 10 minutes)               |
-| `--keep-alive`              |       | Run indefinitely (disable timeout)                     |
-| `--zip`                     |       | Zip files/directories before sharing                   |
-| `--url-path <path>`         |       | Custom URL path (default: random 16-char string)       |
-| `--config <path>`           |       | Custom config file path                                |
-| `--copy-url`                |       | Automatically copy URL to clipboard                    |
-| `--allow-ips <ip1,ip2>`     |       | Restrict access to specific IPs (wildcard/CIDR)        |
-| `--rate-limit <number>`     |       | Max requests per window (default: 100)                 |
-| `--rate-limit-window <sec>` |       | Rate limit window in seconds (default: 60)             |
-| `--allow-types <ext1,ext2>` |       | Restrict to specific file types/extensions             |
-| `--verbose`                 | `-v`  | Verbose logging                                        |
-| `--debug`                   |       | Debug logging (includes verbose)                       |
-| `--log-file <path>`         |       | Write logs to file                                     |
-| `--json-log`                |       | JSON log format                                        |
-| `--no-color`                |       | Disable colored output                                 |
-| `--interactive`             |       | Interactive file picker                                |
-| `--help`                    | `-h`  | Show help message                                      |
+| Option                      | Short  | Description                                            |
+| --------------------------- | ------ | ------------------------------------------------------ | ----------------------- |
+| `--file <path>`             | `-f`   | Share file(s) (use multiple times, or use `.` for cwd) |
+| `--directory [path]`        | `-d`   | Share directory (default: current)                     |
+| `--output <path>`           | `-o`   | Directory for received files                           |
+| `--secure`                  |        | Enable HTTPS/TLS (auto-generates self-signed cert)     |
+| `--cert <path>`             |        | Custom TLS certificate file (implies --secure)         |
+| `--key <path>`              |        | Custom TLS private key file (implies --secure)         |
+| `--port <number>`           |        | Specify port (default: 1673)                           |
+| `--host <ip                 | fqdn>` |                                                        | Specify host IP or FQDN |
+| `--interface <name>`        |        | Network interface (use "any" for all)                  |
+| `--timeout <seconds>`       |        | Set timeout (default: 600s / 10 minutes)               |
+| `--keep-alive`              |        | Run indefinitely (disable timeout)                     |
+| `--zip`                     |        | Zip files/directories before sharing                   |
+| `--url-path <path>`         |        | Custom URL path (default: random 16-char string)       |
+| `--config <path>`           |        | Custom config file path                                |
+| `--copy-url`                |        | Automatically copy URL to clipboard                    |
+| `--allow-ips <ip1,ip2>`     |        | Restrict access to specific IPs (wildcard/CIDR)        |
+| `--rate-limit <number>`     |        | Max requests per window (default: 100)                 |
+| `--rate-limit-window <sec>` |        | Rate limit window in seconds (default: 60)             |
+| `--allow-types <ext1,ext2>` |        | Restrict to specific file types/extensions             |
+| `--verbose`                 | `-v`   | Verbose logging                                        |
+| `--debug`                   |        | Debug logging (includes verbose)                       |
+| `--log-file <path>`         |        | Write logs to file                                     |
+| `--json-log`                |        | JSON log format                                        |
+| `--no-color`                |        | Disable colored output                                 |
+| `--interactive`             | `-i`   | Interactive file picker                                |
+| `--help`                    | `-h`   | Show help message                                      |
 
 ## Commands
 
@@ -138,8 +140,8 @@ qrdrop --zip --directory ./project        # Zip directory before sharing
 
 # Network configuration
 qrdrop --port 8080 --file doc.pdf         # Use specific port
-qrdrop -i eth0 --file document.pdf        # Use specific network interface
-qrdrop -i any --file document.pdf         # Bind to all interfaces
+qrdrop --interface eth0 --file document.pdf        # Use specific network interface
+qrdrop --interface any --file document.pdf         # Bind to all interfaces
 qrdrop --host fileserver.local --file doc.pdf  # Use FQDN instead of IP
 
 # HTTPS/TLS
@@ -147,7 +149,7 @@ qrdrop --secure --file secret.txt         # Auto-generate self-signed certificat
 qrdrop --cert ./my.crt --key ./my.key --file doc.pdf  # Use custom certificate
 qrdrop cert generate                      # Generate certificate for auto-detected IP
 qrdrop cert generate --host 192.168.1.100 # Generate certificate for specific IP
-qrdrop cert generate -i eth0              # Generate certificate for specific interface
+qrdrop cert generate --interface eth0              # Generate certificate for specific interface
 qrdrop cert generate --cert ./my.crt --key ./my.key  # Custom output paths
 
 # Timeout and keep-alive
@@ -311,10 +313,10 @@ qrdrop includes several security measures:
 ## Troubleshooting
 
 - **QR code not scanning?** Both devices must be on the same Wi-Fi. URL is also shown below QR code.
-- **Connection refused?** Check firewall settings. Try `--port 8080` or use `-i any` to bind to all interfaces.
+- **Connection refused?** Check firewall settings. Try `--port 8080` or use `--interface any` to bind to all interfaces.
 - **Server closes?** Default timeout is 10 minutes. Use `--keep-alive` to disable.
 - **HTTPS warnings?** Normal for self-signed certs. Click "Advanced" → "Proceed" in your browser.
-- **Interface not found?** List available interfaces with `ip addr` (Linux) or `ifconfig` (macOS). Use `-i any` to bind to all interfaces.
+- **Interface not found?** List available interfaces with `ip addr` (Linux) or `ifconfig` (macOS). Use `--interface any` to bind to all interfaces.
 - **File conflicts?** When uploading files with the same name, qrdrop automatically appends numbers (e.g., `file_1.txt`, `file_2.txt`).
 
 ---
@@ -342,56 +344,48 @@ Built with Bun.
 
 ## Comparison with qrcp
 
-| Feature                         | qrdrop                                                           | qrcp                          |
-| ------------------------------- | ---------------------------------------------------------------- | ----------------------------- |
-| **Send files**                  | ✅                                                               | ✅                            |
-| **Receive files**               | ✅                                                               | ✅                            |
-| **Two-way sharing**             | ✅ (simultaneous)                                                | ⚠️ (one direction at a time)  |
-| **Multiple files**              | ✅                                                               | ✅                            |
-| **Share directories**           | ✅                                                               | ✅                            |
-| **Modern Web UI**               | ✅ (drag-and-drop, file list, progress, bulk download, stop btn) | ❌ (basic HTML)               |
-| **Bulk operations**             | ✅ (Download All button, multi-file upload)                      | ❌                            |
-| **Real-time updates**           | ✅ (HTTP polling every 5s)                                       | ❌                            |
-| **Clipboard integration**       | ✅ (`--copy-url` to auto-copy URL)                               | ❌                            |
-| **HTTPS/TLS**                   | ✅ (auto-generated self-signed, custom cert/key, TLS 1.2+)       | ✅ (custom cert/key)          |
-| **Custom port**                 | ✅ (default: 1673)                                               | ✅                            |
-| **Custom host/IP**              | ✅                                                               | ✅                            |
-| **Network interface selection** | ✅ (`-i`, `--interface`)                                         | ✅                            |
-| **Timeout configuration**       | ✅ (default 10 min, configurable)                                | ⚠️ (auto-exit after transfer) |
-| **Keep-alive mode**             | ✅ (`--keep-alive`)                                              | ✅ (`--keep-alive`)           |
-| **Zip before transfer**         | ✅ (`--zip`, no external CLI needed)                             | ✅ (`--zip`)                  |
-| **Configuration file**          | ✅ (TOML, with validation)                                       | ✅ (YAML)                     |
-| **Environment variables**       | ✅ (`QRDROP_*`)                                                  | ✅ (`QRCP_*`)                 |
-| **Random URL path**             | ✅ (16-char random path by default)                              | ❌                            |
-| **Custom URL path**             | ✅ (`--url-path`)                                                | ✅                            |
-| **FQDN support**                | ✅ (`--host`)                                                    | ✅                            |
-| **Shell completion**            | ✅ (bash, zsh, fish, PowerShell)                                 | ✅ (bash, zsh, fish)          |
-| **QR code dark terminal**       | ✅ (optimized)                                                   | ❌                            |
-| **Colored output**              | ✅ (`--no-color` to disable)                                     | ❌                            |
-| **Rate limiting**               | ✅ (`--rate-limit`, `--rate-limit-window`)                       | ❌                            |
-| **IP allowlist**                | ✅ (`--allow-ips` with wildcard/CIDR support)                    | ❌                            |
-| **File type restrictions**      | ✅ (`--allow-types`)                                             | ❌                            |
-| **Max file size**               | ✅ (10GB limit)                                                  | ❌                            |
-| **Structured logging**          | ✅ (`--verbose`, `--debug`, `--log-file`, `--json-log`)          | ❌                            |
-| **Request logging**             | ✅ (IP, user-agent, timestamp)                                   | ❌                            |
-| **Interactive mode**            | ✅ (`--interactive`, `init`, `status` commands)                  | ❌                            |
-| **Improved help**               | ✅ (colored, formatted with examples)                            | ⚠️ (basic)                    |
-| **Resume downloads**            | ✅ (HTTP range requests)                                         | ⚠️ (limited)                  |
-| **Path traversal protection**   | ✅ (recursive decode, symlink rejection)                         | ⚠️ (basic)                    |
-| **Certificate expiry warnings** | ✅ (warns when cert expires soon)                                | ❌                            |
-| **Runtime**                     | Bun (fast startup)                                               | Go                            |
-| **Press 'q' to quit**           | ✅                                                               | ❌                            |
-| **Stop from Web UI**            | ✅                                                               | ❌                            |
+| Feature                     | qrdrop                                                           | qrcp                          |
+| --------------------------- | ---------------------------------------------------------------- | ----------------------------- |
+| **Core File Operations**    |                                                                  |                               |
+| Send files                  | ✅                                                               | ✅                            |
+| Receive files               | ✅                                                               | ✅                            |
+| Two-way sharing             | ✅ (simultaneous)                                                | ⚠️ (one direction at a time)  |
+| Share directories           | ✅                                                               | ✅                            |
+| Zip before transfer         | ✅                                                               | ✅                            |
+| **Web UI Features**         |                                                                  |                               |
+| Modern Web UI               | ✅ (drag-and-drop, file list, progress, bulk download, stop btn) | ❌ (basic HTML)               |
+| Bulk operations             | ✅ (Download All button, multi-file upload)                      | ❌                            |
+| Real-time updates           | ✅ (HTTP polling every 5s)                                       | ❌                            |
+| Stop from Web UI            | ✅                                                               | ❌                            |
+| **Network Configuration**   |                                                                  |                               |
+| Custom port                 | ✅ (default: 1673)                                               | ✅                            |
+| Custom host/IP              | ✅                                                               | ✅                            |
+| Network interface selection | ✅ (`--interface`)                                               | ✅                            |
+| FQDN support                | ✅ (`--host`)                                                    | ✅                            |
+| Custom URL path             | ✅ (`--url-path`)                                                | ✅                            |
+| **Server Management**       |                                                                  |                               |
+| Timeout configuration       | ✅ (default 10 min, configurable)                                | ⚠️ (auto-exit after transfer) |
+| Keep-alive mode             | ✅                                                               | ✅                            |
+| **Security Features**       |                                                                  |                               |
+| HTTPS/TLS                   | ✅                                                               | ✅                            |
+| Rate limiting               | ✅ (`--rate-limit`, `--rate-limit-window`)                       | ❌                            |
+| IP allowlist                | ✅ (`--allow-ips` with wildcard/CIDR support)                    | ❌                            |
+| File type restrictions      | ✅ (`--allow-types`)                                             | ❌                            |
+| Max file size               | ✅ (10GB limit)                                                  | ❌                            |
+| Path traversal protection   | ✅ (recursive decode, symlink rejection)                         | ⚠️ (basic)                    |
+| **Configuration & Setup**   |                                                                  |                               |
+| Configuration file          | ✅ (TOML, with validation)                                       | ✅ (YAML)                     |
+| Environment variables       | ✅ (`QRDROP_*`)                                                  | ✅ (`QRCP_*`)                 |
+| Shell completion            | ✅ (bash, zsh, fish, PowerShell)                                 | ✅ (bash, zsh, fish)          |
+| Interactive mode            | ✅ (`--interactive`, `init`, `status` commands)                  | ❌                            |
+| **Logging & Monitoring**    |                                                                  |                               |
+| Structured logging          | ✅ (`--verbose`, `--debug`, `--log-file`, `--json-log`)          | ❌                            |
+| Request logging             | ✅ (IP, user-agent, timestamp)                                   | ❌                            |
 
 **Key Differences:**
 
 - **qrdrop** focuses on a modern web UI experience with drag-and-drop, bulk download, real-time updates, and server control from the browser
-- **qrdrop** generates random URL paths by default for security (no predictable URLs)
 - **qrdrop** auto-generates self-signed certificates with no external dependencies (no OpenSSL required)
-- **qrdrop** uses TOML config files with validation and XDG config directory support
-- **qrdrop** supports PowerShell completion (better Windows support)
 - **qrdrop** supports true two-way sharing (send and receive simultaneously)
 - **qrdrop** includes advanced security features (rate limiting, IP allowlist with wildcard/CIDR support, file type restrictions, path traversal protection, symlink rejection)
-- **qrdrop** has enhanced developer experience (structured logging, colored output, interactive mode, improved help)
-- **qrdrop** includes clipboard integration for easy URL sharing
-- **qrdrop** is built with Bun for faster startup times
+- **qrdrop** has enhanced developer experience
