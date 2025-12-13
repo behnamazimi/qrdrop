@@ -6,6 +6,10 @@
 import { readFile, writeFile, mkdir } from "fs/promises";
 import { join, dirname } from "path";
 
+// Set NODE_ENV to production BEFORE building so Bun uses the production JSX runtime
+// This is required because Bun decides which JSX runtime to use (jsx vs jsxDEV) based on NODE_ENV
+process.env.NODE_ENV = "production";
+
 const UI_DIR = dirname(import.meta.path);
 const DIST_DIR = join(UI_DIR, "dist");
 
