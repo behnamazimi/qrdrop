@@ -89,7 +89,7 @@ qrdrop completion bash                  # Generate shell completion script
 ## Options
 
 | Option                      | Short  | Description                                            |
-| --------------------------- | ------ | ------------------------------------------------------ | ----------------------- |
+| --------------------------- | ------ | ------------------------------------------------------ |
 | `--file <path>`             | `-f`   | Share file(s) (use multiple times, or use `.` for cwd) |
 | `--directory [path]`        | `-d`   | Share directory (default: current)                     |
 | `--output <path>`           | `-o`   | Directory for received files                           |
@@ -97,7 +97,7 @@ qrdrop completion bash                  # Generate shell completion script
 | `--cert <path>`             |        | Custom TLS certificate file (implies --secure)         |
 | `--key <path>`              |        | Custom TLS private key file (implies --secure)         |
 | `--port <number>`           |        | Specify port (default: 1673)                           |
-| `--host <ip                 | fqdn>` |                                                        | Specify host IP or FQDN |
+| `--host <ip\|fqdn>`         |        | Specify host IP or FQDN                                |
 | `--interface <name>`        |        | Network interface (use "any" for all)                  |
 | `--timeout <seconds>`       |        | Set timeout (default: 600s / 10 minutes)               |
 | `--keep-alive`              |        | Run indefinitely (disable timeout)                     |
