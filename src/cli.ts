@@ -1,6 +1,12 @@
 import { parseArgs as bunParseArgs } from "util";
 import { initColors, color } from "./output";
 import { SubCommand, type ParsedCommand } from "./types/commands";
+import { readFileSync } from "fs";
+import { join } from "path";
+
+// Build-time constant injected during compilation
+// If not defined (development mode), will be undefined
+declare const BUILD_VERSION: string | undefined;
 
 export interface CliOptions {
   files: string[];
@@ -51,11 +57,12 @@ const parseArgsConfig = {
   "rate-limit": { type: "string" },
   "rate-limit-window": { type: "string" },
   "allow-types": { type: "string" },
-  verbose: { type: "boolean", short: "v", default: false },
+  verbose: { type: "boolean", default: false },
   debug: { type: "boolean", default: false },
   "log-file": { type: "string" },
   "json-log": { type: "boolean", default: false },
   help: { type: "boolean", short: "h", default: false },
+  version: { type: "boolean", short: "v", default: false },
   interactive: { type: "boolean", default: false, short: "i" },
   cert: { type: "string" },
   key: { type: "string" },
@@ -108,11 +115,14 @@ export function parseArgs(): CliOptions {
     process.exit(0);
   }
 
-  // Get positional arguments (skip bun executable and script path)
-  const args = positionals.slice(2);
+  // Handle version flag (--version or -v)
+  if (values.version === true) {
+    printVersion();
+    process.exit(0);
+  }
 
   // Parse subcommand
-  const command = parseSubcommand(args);
+  const command = parseSubcommand(positionals);
 
   // For early-exit subcommands, return minimal options
   if (
@@ -251,7 +261,7 @@ export function parseArgs(): CliOptions {
   }
 
   // Add positional arguments as files (skip subcommands)
-  for (const arg of args) {
+  for (const arg of positionals) {
     if (!["init", "status", "config", "completion"].includes(arg)) {
       options.files.push(arg);
     }
@@ -300,6 +310,25 @@ function createDefaultOptions(noColor: boolean, command: ParsedCommand): CliOpti
   return options;
 }
 
+function printVersion() {
+  // Use build-time constant if available (compiled binary)
+  if (typeof BUILD_VERSION !== "undefined") {
+    console.log(BUILD_VERSION);
+    return;
+  }
+
+  // Fallback: read from package.json (development mode)
+  try {
+    const packageJsonPath = import.meta.dir
+      ? join(import.meta.dir, "..", "package.json")
+      : join(process.cwd(), "package.json");
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
+    console.log(packageJson.version || "unknown");
+  } catch (err) {
+    console.log("unknown");
+  }
+}
+
 function printHelp() {
   const cmd = color.cyan("qrdrop");
   const opt = color.yellow;
@@ -337,11 +366,12 @@ ${header("OPTIONS")}
   ${opt("--rate-limit <number>")}   Max requests per window (default: 100)
   ${opt("--rate-limit-window <sec>")} Rate limit window in seconds (default: 60)
   ${opt("--allow-types <ext1,ext2>")} Restrict to specific file types/extensions
-  ${opt("-v, --verbose")}          Verbose logging
+  ${opt("--verbose")}                Verbose logging
   ${opt("--debug")}                 Debug logging
   ${opt("--log-file <path>")}      Write logs to file
   ${opt("--json-log")}              JSON log format
   ${opt("-h, --help")}              Show this help message
+  ${opt("-v, --version")}           Show version number
 
 ${header("EXAMPLES")}
   ${example("# Basic usage")}

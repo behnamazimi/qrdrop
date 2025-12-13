@@ -19,7 +19,7 @@
     "format:check": "prettier --check .",
     "check-types": "tsc --noEmit",
     "build:ui": "bun run src/ui/build.ts",
-    "build": "bun run build:ui && mkdir -p dist && node -e \"const p=process.platform;const ext=p==='win32'?'.exe':'';const cmd='bun build --compile index.ts --outfile dist/qrdrop'+ext+' --minify'+(p==='win32'?' --windows-hide-console':'');require('child_process').execSync(cmd,{stdio:'inherit'})\"",
+    "build": "bun run build:ui && mkdir -p dist && node -e \"const fs=require('fs');const p=process.platform;const ext=p==='win32'?'.exe':'';const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));const version='\\''+JSON.stringify(pkg.version)+'\\'';const winFlag=p==='win32'?' --windows-hide-console':'';const cmd='bun build --compile --define BUILD_VERSION='+version+' index.ts --outfile dist/qrdrop'+ext+' --minify'+winFlag;require('child_process').execSync(cmd,{stdio:'inherit'})\"",
     "build:windows": "echo 'Note: build:windows only works on Windows. Use \"bun run build\" on Windows instead.'"
   },
   "dependencies": {

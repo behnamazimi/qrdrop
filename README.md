@@ -109,13 +109,14 @@ qrdrop completion bash                  # Generate shell completion script
 | `--rate-limit <number>`     |        | Max requests per window (default: 100)                 |
 | `--rate-limit-window <sec>` |        | Rate limit window in seconds (default: 60)             |
 | `--allow-types <ext1,ext2>` |        | Restrict to specific file types/extensions             |
-| `--verbose`                 | `-v`   | Verbose logging                                        |
+| `--verbose`                 |        | Verbose logging                                        |
 | `--debug`                   |        | Debug logging (includes verbose)                       |
 | `--log-file <path>`         |        | Write logs to file                                     |
 | `--json-log`                |        | JSON log format                                        |
 | `--no-color`                |        | Disable colored output                                 |
 | `--interactive`             | `-i`   | Interactive file picker                                |
 | `--help`                    | `-h`   | Show help message                                      |
+| `--version`                 | `-v`   | Show version                                           |
 
 ## Commands
 
