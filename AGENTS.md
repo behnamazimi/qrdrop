@@ -64,6 +64,7 @@ bun run build
 ### 3. Functional testing (for feature changes)
 
 Test relevant functionality:
+
 - File sharing: `./dist/qrdrop --file <test-file>`
 - File receiving: `./dist/qrdrop --output ./test-downloads`
 - CLI commands: `./dist/qrdrop init`, `./dist/qrdrop status`, `./dist/qrdrop cert generate`

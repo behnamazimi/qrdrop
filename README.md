@@ -10,6 +10,16 @@ A two-way LAN file-sharing CLI tool built with Bun. Share files across your loca
 
 > **Note:** Like all local network file-sharing tools, qrdrop shares files over your LAN. Be mindful of what you share and consider using the built-in security features (IP allowlists, rate limiting, HTTPS) for sensitive files. This is standard practice for any tool in this category.
 
+<div align="center">
+    <a href="https://peerlist.io/baz7c8/project/qrdrop" target="_blank" rel="noreferrer">
+        <img
+            src="https://dqy38fnwh4fqs.cloudfront.net/website/project-spotlight/project-week-rank-three-light.svg"
+            alt="qrdrop"
+            style="width: auto; height: 56px;"
+        />
+    </a>
+</div>
+
 ## Installation
 
 ### Quick Install (Recommended)
@@ -88,35 +98,35 @@ qrdrop completion bash                  # Generate shell completion script
 
 ## Options
 
-| Option                      | Short  | Description                                            |
-| --------------------------- | ------ | ------------------------------------------------------ |
-| `--file <path>`             | `-f`   | Share file(s) (use multiple times, or use `.` for cwd) |
-| `--directory [path]`        | `-d`   | Share directory (default: current)                     |
-| `--output <path>`           | `-o`   | Directory for received files                           |
-| `--secure`                  |        | Enable HTTPS/TLS (auto-generates self-signed cert)     |
-| `--cert <path>`             |        | Custom TLS certificate file (implies --secure)         |
-| `--key <path>`              |        | Custom TLS private key file (implies --secure)         |
-| `--port <number>`           |        | Specify port (default: 1673)                           |
-| `--host <ip\|fqdn>`         |        | Specify host IP or FQDN                                |
-| `--interface <name>`        |        | Network interface (use "any" for all)                  |
-| `--timeout <seconds>`       |        | Set timeout (default: 600s / 10 minutes)               |
-| `--keep-alive`              |        | Run indefinitely (disable timeout)                     |
-| `--zip`                     |        | Zip files/directories before sharing                   |
-| `--url-path <path>`         |        | Custom URL path (default: random 16-char string)       |
-| `--config <path>`           |        | Custom config file path                                |
-| `--copy-url`                |        | Automatically copy URL to clipboard                    |
-| `--allow-ips <ip1,ip2>`     |        | Restrict access to specific IPs (wildcard/CIDR)        |
-| `--rate-limit <number>`     |        | Max requests per window (default: 100)                 |
-| `--rate-limit-window <sec>` |        | Rate limit window in seconds (default: 60)             |
-| `--allow-types <ext1,ext2>` |        | Restrict to specific file types/extensions             |
-| `--verbose`                 |        | Verbose logging                                        |
-| `--debug`                   |        | Debug logging (includes verbose)                       |
-| `--log-file <path>`         |        | Write logs to file                                     |
-| `--json-log`                |        | JSON log format                                        |
-| `--no-color`                |        | Disable colored output                                 |
-| `--interactive`             | `-i`   | Interactive file picker                                |
-| `--help`                    | `-h`   | Show help message                                      |
-| `--version`                 | `-v`   | Show version                                           |
+| Option                      | Short | Description                                            |
+| --------------------------- | ----- | ------------------------------------------------------ |
+| `--file <path>`             | `-f`  | Share file(s) (use multiple times, or use `.` for cwd) |
+| `--directory [path]`        | `-d`  | Share directory (default: current)                     |
+| `--output <path>`           | `-o`  | Directory for received files                           |
+| `--secure`                  |       | Enable HTTPS/TLS (auto-generates self-signed cert)     |
+| `--cert <path>`             |       | Custom TLS certificate file (implies --secure)         |
+| `--key <path>`              |       | Custom TLS private key file (implies --secure)         |
+| `--port <number>`           |       | Specify port (default: 1673)                           |
+| `--host <ip\|fqdn>`         |       | Specify host IP or FQDN                                |
+| `--interface <name>`        |       | Network interface (use "any" for all)                  |
+| `--timeout <seconds>`       |       | Set timeout (default: 600s / 10 minutes)               |
+| `--keep-alive`              |       | Run indefinitely (disable timeout)                     |
+| `--zip`                     |       | Zip files/directories before sharing                   |
+| `--url-path <path>`         |       | Custom URL path (default: random 16-char string)       |
+| `--config <path>`           |       | Custom config file path                                |
+| `--copy-url`                |       | Automatically copy URL to clipboard                    |
+| `--allow-ips <ip1,ip2>`     |       | Restrict access to specific IPs (wildcard/CIDR)        |
+| `--rate-limit <number>`     |       | Max requests per window (default: 100)                 |
+| `--rate-limit-window <sec>` |       | Rate limit window in seconds (default: 60)             |
+| `--allow-types <ext1,ext2>` |       | Restrict to specific file types/extensions             |
+| `--verbose`                 |       | Verbose logging                                        |
+| `--debug`                   |       | Debug logging (includes verbose)                       |
+| `--log-file <path>`         |       | Write logs to file                                     |
+| `--json-log`                |       | JSON log format                                        |
+| `--no-color`                |       | Disable colored output                                 |
+| `--interactive`             | `-i`  | Interactive file picker                                |
+| `--help`                    | `-h`  | Show help message                                      |
+| `--version`                 | `-v`  | Show version                                           |
 
 ## Commands
 
